@@ -61,8 +61,6 @@ class DjangoFieldTestCase(unittest.TestCase):
             version='0.1.1', spec='blah')
         self.assertRaises(ValueError, models.VersionModel,
             version='0.1', spec='==0.1.1,!=0.1.1-alpha')
-        self.assertRaises(ValueError, models.VersionModel,
-            version='0.1.1', spec='==0,!=0.2')
 
     def test_partial(self):
         obj = models.PartialVersionModel(partial='0.1.0')

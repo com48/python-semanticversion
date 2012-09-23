@@ -58,7 +58,7 @@ def identifier_list_cmp(a, b):
 class Version(object):
 
     version_re = re.compile('^(\d+)\.(\d+)\.(\d+)(?:-([0-9a-zA-Z.-]+))?(?:\+([0-9a-zA-Z.-]+))?$')
-    partial_version_re = re.compile('^(\d+)\.(\d+)\.(\d+)(?:-([0-9a-zA-Z.-]*))?(?:\+([0-9a-zA-Z.-]*))?$')
+    partial_version_re = re.compile('^(\d+)(?:\.(\d+))?(?:\.(\d+))?(?:-([0-9a-zA-Z.-]+))?(?:\+([0-9a-zA-Z.-]+))?$')
 
     def __init__(self, version_string, partial=False):
         major, minor, patch, prerelease, build = self.parse(version_string, partial)
@@ -88,8 +88,8 @@ class Version(object):
         major, minor, patch, prerelease, build = match.groups()
 
         major = int(major)
-        minor = int(minor)
-        patch = int(patch)
+        minor = int(minor) if minor else None
+        patch = int(patch) if patch else None
 
         if prerelease is None:
             if partial and (build is None):
@@ -118,8 +118,12 @@ class Version(object):
         return iter((self.major, self.minor, self.patch, self.prerelease, self.build))
 
     def __str__(self):
-        version = '%d.%d.%d' % (self.major, self.minor, self.patch)
-
+        
+        version = str(self.major)
+        if self.minor:
+            version += "."+str(self.minor)
+        if self.patch:
+            version += "."+str(self.patch)
         if self.prerelease or (self.partial and self.prerelease == () and self.build is None):
             version = '%s-%s' % (version, '.'.join(self.prerelease))
         if self.build or (self.partial and self.build == ()):
